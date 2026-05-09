@@ -1,0 +1,146 @@
+prompt 1:
+# Task: Refactor Guest Screens (V1.3 Neutrality & Multi-language)
+
+Refactor the 'History' and 'Account' screens specifically for the Unauthenticated (Guest) state. Follow the existing layout and structure of the app.
+
+## 1. Global Rules
+- **Law 54 Compliance:** No scoring, no healthy/safety labels, and no red/green evaluation colors. Use only Scanni Logo Green as the primary color.
+- **Languages:** Implement 4-language support (en, fr, ar, ar_tn) using ARB files.
+- **RTL Support:** Enable Right-To-Left layout for 'ar' and 'ar_tn'. 
+
+## 2. Screen: History (Guest Mode)
+- **UI Structure:** Maintain the lock icon in the center, followed by a title, a subtitle, and a primary action button.
+- **Translations:**
+  - en: Title: "Sign in to see history", Subtitle: "Your scan history is only available for registered users.", Button: "Go to Login"
+  - fr: Title: "Connectez-vous pour voir l'historique", Subtitle: "Votre historique de scan est disponible uniquement pour les utilisateurs inscrits.", Button: "Go to Login"
+  - ar: Title: "تسجيل الدخول لرؤية السجل", Subtitle: "سجل المسح الخاص بك متاح فقط للمستخدمين المسجلين.", Button: "الذهاب إلى تسجيل الدخول"
+  - ar_tn: Title: "ادخل باش تشوف السجل متاعك", Subtitle: "السجل متاعك ما يظهر كان كيف تبدأ مسجل عندنا.", Button: "امشي للـ Connexion"
+
+## 3. Screen: Account (Guest Mode)
+- **UI Structure:** Maintain the generic avatar at the top, the title "Guest Mode", the explanatory subtitle, and the login button.
+- **Translations:**
+  - en: Title: "Guest Mode", Subtitle: "Sign in to sync your history and customize your profile.", Button: "Go to Login"
+  - fr: Title: "Mode Invité", Subtitle: "Connectez-vous pour synchroniser votre historique et personnaliser votre profil.", Button: "Go to Login"
+  - ar: Title: "وضع الزائر", Subtitle: "سجل الدخول لمزامنة سجلك وتخصيص ملفك الشخصي.", Button: "الذهاب إلى تسجيل الدخول"
+  - ar_tn: Title: "وضع الزائر (Guest)", Subtitle: "ادخل باش تسجل التاريخ متاعك وتعدل البروفيل متاعك.", Button: "امشي للـ Connexion"
+
+## 4. Technical Implementation
+- Use standard 'flutter_localizations'.
+- Ensure 'Go to Login' navigates to the authentication screen.
+- Default language fallback: English (en).
+
+prompt 2:
+# Task: Final Refactor of Login Screen (Scanni V1.3 - Institutional Branding)
+
+Refactor the Login screen into a professional, multi-language, and neutral technical platform. Follow the established design rules precisely.
+
+## 1. Top Header & Language Control
+- **Language Selector:** Add a discreet dropdown in the Top-Right (Top-Left for RTL).
+- **Options:** English, Français, العربية, العربية (تونس).
+- **Behavior:** All text elements on the screen must update instantly when a language is selected.
+
+## 2. Central Visuals (Logo & Slogan)
+- **Scanni Logo:** Keep the original logo (green apple/ring) EXACTLY as it is. DO NOT modify its colors or design.
+- **Slogan (Dynamic Translation):** Place below the logo.
+    - en: "Scan, Understand, Protect yourself"
+    - fr: "Scanner, Comprendre, Se protéger"
+    - ar: "افحص، افهم، احمِ نفسك"
+    - ar_tn: "اسكاني، افهم، واحمِي روحك"
+
+## 3. Interaction Buttons
+- **Background Card:** Remove the solid white background to create a transparent/floating UI effect.
+- **Google Sign-In Button:**
+    - DO NOT change colors. Keep the official Google branding (White background, multi-color logo).
+    - Text (en/fr/ar/ar_tn): "Sign in with Google" / "Se connecter avec Google" / "تسجيل الدخول بـ Google" / "ادخل بـ Google"
+- **Guest Button:**
+    - Keep the original dark grey color.
+    - Text (en/fr/ar/ar_tn): "Continue as Guest" / "Continuer en tant qu'invité" / "المتابعة كزائر" / "كمل كـ Guest"
+
+## 4. Institutional Footer
+- **Privacy Policy:** Add a thin, grey, clickable text link below the buttons.
+    - Localization: "Privacy Policy" / "Politique de confidentialité" / "سياسة الخصوصية".
+- **Partner Logos (SVG):** Place in a horizontal row at the very bottom.
+    - Assets: 'assets/logos/poly.svg' and 'assets/logos/horizon_impact.svg'.
+    - Sizing: Small height (35px-40px), centered, professional alignment.
+
+## 5. Technical Requirements
+- Use 'flutter_localizations' and 'flutter_svg'.
+- RTL Support: Full layout flip for 'ar' and 'ar_tn'.
+- Law 54 Compliance: NO mention of "Healthy", "Health", or safety scores.
+
+prompt 3 :
+# Task: Refactor History Screen with Pagination & SQL Join Logic
+
+Refactor the History screen to support paginated loading while maintaining the exact existing header and search design.
+
+## 1. Header & Search (Unchanged Design)
+- **Top Bar:** Scanni Logo (Left), Profile Icon (Right).
+- **Titles:** 4-language localized title "Your scans" and subtitle.
+- **Search Bar:** Functional search input that filters results. 
+- **STRICT RULE:** Do not change the layout or spacing of these elements.
+
+## 2. Paginated List Logic
+-  **Empty State:** If no scans, show a large 'Scan Viewfinder' icon and text: "No scan history available" (Localized in 4 languages).
+- **Infinite Scroll:** Implement lazy loading (pagination). Load 20 items at a time as the user scrolls down.
+- **Loading UI:** Show a discreet 'Scanni Green' loading spinner at the bottom when fetching the next page.
+- **SQL Query Logic:** Use `LIMIT` and `OFFSET` based on the scroll position. 
+    - Reset pagination when the user types in the search bar.
+
+## 3. Data & Iconography (test_type_enum)
+- **Source:** Join `history` with `history_details` and `translations`.
+- **Title:** Fetch `generic_name` from `translations` based on current locale (en, fr, ar, ar_tn).
+- **Icons:** 
+    - IF `label_scan`: Use 'Ingredient/Data Scan' icon.
+    - IF `dish_scan`: Use 'Whole Food' (fruit/produce) icon.
+- **Color:** Use Scanni Logo Green for icons. No scores, no red/green safety indicators.
+
+## 4. Technical Requirements
+- Full RTL support for 'ar' and 'ar_tn'.
+- Use 'flutter_localizations' for all strings (Search hint, Titles, etc.).
+- Ensure smooth scrolling and memory management (dispose controllers).
+
+prompt 4 :
+# Task: Final Implementation of Home Screen (Scanni V1.5)
+
+Refactor the Home screen while strictly adhering to neutrality and professional technical standards.
+
+## 1. Header (STRICTLY UNCHANGED)
+- Keep Scanni Logo (Left) and Profile Icon (Right) in their exact current positions.
+- DO NOT modify the design, padding, or alignment of the top header section.
+
+## 2. Search Bar (Scientific Lexicon Only)
+- Function: Query ONLY the 'scientific_lexicon' table for ingredient names or codes (e.g., "E120").
+- Hint Text (Localized): 
+    - en: "Search for an ingredient (ex: E120)..."
+    - fr: "Chercher un ingrédient (ex: E120)..."
+    - ar: "ابحث عن مكون (مثال: E120)..."
+    - ar_tn: "لوّج على composant (مثال E120)..."
+
+## 3. Hero Card (Green Section - Precise Content)
+- **Top Badge Label:** 
+    - en: "Ingredient information" | fr: "Infos ingrédients" | ar: "معلومات المكونات" | ar_tn: "Info mta3 ingrédients"
+- **Main Title:** 
+    - en: "Scan to view ingredients" | fr: "Scanner pour voir les ingrédients" | ar: "اسحب لرؤية المكونات" | ar_tn: "اسكاني باش تشوف المكونات"
+    - *Style:* Bold, Large font (Primary focus).
+- **Subtitle:** 
+    - en: "View detailed ingredient composition"
+    - fr: "Voir la composition détaillée des ingrédients."
+    - ar: "عرض تركيبة المكونات بالتفصيل."
+    - ar_tn: "شوف الـ composition détaillée متاع المكونات."
+    - *Style:* Regular, Smaller font size to ensure it fits on 1-2 lines in all 4 languages.
+- **Button:** White button with green arrow.
+    - en: "Start scanning" | fr: "Lancer le scan" | ar: "ابدأ المسح" | ar_tn: "ابدا اسكاني"
+
+## 4. Recent Scans Section (Shared History Design)
+- **Logic:** Display only the 3 most recent scans.
+- **Empty State:** If no scans, show a large 'Scan Viewfinder' icon and text: "No scan history available" (Localized in 4 languages).
+- **Item Design:** Use the EXACT SAME widget as the History screen.
+    - Title: Localized 'generic_name' from 'translations' table.
+    - Subtitle: Scan timestamp.
+    - Icon: 'Ingredient Scan' for 'label_scan' and 'Whole Food' for 'dish_scan'.
+- **STRICT NEUTRALITY:** REMOVE all scores (92, 35) and all evaluative colors (Red/Green badges).
+
+## 5. Global Technical Requirements
+- Support full RTL (Right-to-Left) for 'ar' and 'ar_tn' locales.
+- All strings must be managed via 'flutter_localizations'.
+- Maintain exact layout, font hierarchy, and spacing from the original screenshot.

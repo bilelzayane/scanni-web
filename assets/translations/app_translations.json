@@ -1,0 +1,172 @@
+{
+  "camera": {
+    "error": {
+      "generic": {
+        "fr": "Erreur caméra",
+        "en": "Camera error",
+        "ar": "خطأ في الكاميرا",
+        "ar_TN": "غلط في الكاميرا"
+      }
+    },
+    "scan_instruction": {
+      "fr": "Pointez la caméra pour analyser",
+      "en": "Point camera to scan",
+      "ar": "وجّه الكاميرا للمسح",
+      "ar_TN": "وجّه الكاميرا باش تعمل سكان"
+    },
+    "analyzing": {
+      "fr": "Analyse en cours…",
+      "en": "Analyzing…",
+      "ar": "جارٍ التحليل…",
+      "ar_TN": "قاعدين نحللو…"
+    }
+  },
+  "ai": {
+    "disclaimer": {
+      "fr": "Généré par IA - En attente de validation scientifique",
+      "en": "AI-generated - Pending scientific validation",
+      "ar": "تم إنشاؤه بواسطة الذكاء الاصطناعي - في انتظار التحقق العلمي",
+      "ar_TN": "مولّد بالذكاء الاصطناعي - يستنى في التثبّت العلمي"
+    }
+  },
+  "scan": {
+    "new": {
+      "fr": "Lancer un nouveau scan",
+      "en": "Launch a new scan",
+      "ar": "بدء مسح جديد",
+      "ar_TN": "ابدأ سكان جديد"
+    }
+  },
+  "analysis": {
+    "quantitative": {
+      "title": {
+        "fr": "Analyse quantitative",
+        "en": "Quantitative Analysis",
+        "ar": "تحليل كمي",
+        "ar_TN": "تحليل كمي"
+      },
+      "empty": {
+        "fr": "Aucune donnée quantitative disponible",
+        "en": "No quantitative data available",
+        "ar": "لا توجد بيانات كمية متاحة",
+        "ar_TN": "ما فماش بيانات كمية"
+      }
+    },
+    "technical": {
+      "title": {
+        "fr": "Composition technique",
+        "en": "Technical Composition",
+        "ar": "التركيبة التقنية",
+        "ar_TN": "التركيبة التقنية"
+      },
+      "empty": {
+        "fr": "Aucune donnée technique disponible",
+        "en": "No technical data available",
+        "ar": "لا توجد بيانات تقنية متاحة",
+        "ar_TN": "ما فماش بيانات تقنية"
+      }
+    }
+  },
+  "common": {
+    "source": {
+      "fr": "Source : {value}",
+      "en": "Source: {value}",
+      "ar": "المصدر: {value}",
+      "ar_TN": "المصدر: {value}"
+    },
+    "error": {
+      "fr": "Une erreur est survenue",
+      "en": "An error occurred",
+      "ar": "حدث خطأ",
+      "ar_TN": "صار غلطة"
+    },
+    "no_data": {
+      "fr": "Aucune donnée disponible",
+      "en": "No data available",
+      "ar": "لا توجد بيانات",
+      "ar_TN": "ما فماش داتا"
+    }
+  },
+  "result": {
+    "not_found": {
+      "fr": "Scan introuvable",
+      "en": "Scan not found",
+      "ar": "لم يتم العثور على المسح",
+      "ar_TN": "السكان موش موجود"
+    },
+    "deleted": {
+      "fr": "Scan supprimé",
+      "en": "Scan deleted",
+      "ar": "تم حذف المسح",
+      "ar_TN": "السكان تحذف"
+    },
+    "go_home": {
+      "fr": "Accueil",
+      "en": "Go home",
+      "ar": "العودة للرئيسية",
+      "ar_TN": "ارجع للرئيسية"
+    }
+  },
+  "account": {
+    "title": {
+      "fr": "Compte",
+      "en": "Account",
+      "ar": "الحساب",
+      "ar_TN": "الحساب"
+    },
+    "role": {
+      "health_advocate": {
+        "fr": "Défenseur de la santé",
+        "en": "Health Advocate",
+        "ar": "مدافع عن الصحة",
+        "ar_TN": "مدافع على الصحة"
+      }
+    },
+    "activity": {
+      "title": {
+        "fr": "Mon activité",
+        "en": "My Activity",
+        "ar": "نشاطي",
+        "ar_TN": "النشاط متاعي"
+      },
+      "contributions": {
+        "fr": "Contributions",
+        "en": "Contributions",
+        "ar": "المساهمات",
+        "ar_TN": "المساهمات"
+      },
+      "awareness": {
+        "fr": "Sensibilisation santé",
+        "en": "Health Awareness",
+        "ar": "التوعية الصحية",
+        "ar_TN": "التوعية الصحية"
+      }
+    },
+    "health_profile": {
+      "fr": "Profil de santé personnel",
+      "en": "Personal Health Profile",
+      "ar": "الملف الصحي الشخصي",
+      "ar_TN": "البروفيل الصحي"
+    },
+    "coming_soon": {
+      "fr": "Bientôt disponible",
+      "en": "Coming Soon",
+      "ar": "قريباً",
+      "ar_TN": "قريب ياسر"
+    }
+  },
+  "home": {
+    "error_loading": {
+      "fr": "Erreur lors du chargement des scans récents",
+      "en": "Error loading recent scans",
+      "ar": "خطأ في تحميل عمليات المسح الأخيرة",
+      "ar_TN": "غلط في تحميل السكانات الأخيرة"
+    },
+    "days_ago": {
+      "fr": "il y a {days} jours",
+      "en": "{days} days ago",
+      "ar": "منذ {days} أيام",
+      "ar_TN": "من {days} أيام"
+    }
+  }
+}
