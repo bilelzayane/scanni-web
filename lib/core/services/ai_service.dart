@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,8 +40,7 @@ STRICT RULES:
 JSON STRUCTURE:
 {
   "scan_info": {
-    "title_suggested": "Generic name only",
-    "analysis_timestamp": "ISO8601"
+    "title_suggested": "Generic name only"
   },
   "ingredients_detected": [
     {
@@ -76,7 +76,15 @@ SPECIFIC HANDLING:
 
     try {
       final response = await _model.generateContent(content);
-      final result = response.text ?? '{}';
+      final rawResult = response.text ?? '{}';
+
+      // Parse and add system timestamp
+      final Map<String, dynamic> data = json.decode(rawResult);
+      if (data.containsKey('scan_info')) {
+        data['scan_info']['analysis_timestamp'] = DateTime.now().toIso8601String();
+      }
+
+      final result = json.encode(data);
       print('DEBUG: AiService.analyzeProduct - RESULT: $result');
       return result;
     } catch (e) {

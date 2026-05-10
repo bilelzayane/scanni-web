@@ -100,6 +100,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     setState(() {
       _flashEnabled = !_flashEnabled;
     });
+    _cameraController.toggleTorch();
   }
 
   Future<void> _handleCapture() async {

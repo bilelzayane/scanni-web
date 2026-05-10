@@ -49,9 +49,14 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: listenable,
     redirect: (context, state) {
-      final currentUser = authRepository.currentUser;
-      final isGuest = ref.read(isGuestProvider);
-      final isAuthenticated = currentUser != null;
+      final authState = ref.read(authStateProvider);
+      final isGuestState = ref.read(isGuestProvider);
+      
+      // If either auth or guest state is loading (first initialization), don't redirect yet
+      if (authState.isLoading || isGuestState.isLoading) return null;
+
+      final isAuthenticated = authState.value?.session != null;
+      final isGuest = isGuestState.value ?? false;
       final isOnAuthPage = state.uri.toString() == '/auth';
 
       // Allow through if authenticated OR in guest mode

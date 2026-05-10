@@ -2,6 +2,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
 
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -64,11 +65,12 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> signInWithGoogle() async {
     if (kIsWeb) {
       // Web: Use Supabase's native OAuth flow
+      final origin = html.window.location.origin;
       await _client.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: 'http://localhost:3000/',
+        redirectTo: '$origin/',
         queryParams: {
-          'prompt': 'select_account', // Force account picker every time
+          'prompt': 'select_account',
           'access_type': 'offline',
         },
       );

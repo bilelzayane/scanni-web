@@ -1,12 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Tracks whether the current session is an unauthenticated guest session.
-/// When true, gated features (History, Account) show a login prompt.
-class GuestNotifier extends Notifier<bool> {
-  @override
-  bool build() => false;
+class GuestNotifier extends AsyncNotifier<bool> {
+  static const _key = 'is_guest_mode';
 
-  void setGuest(bool value) => state = value;
+  @override
+  Future<bool> build() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_key) ?? false;
+  }
+
+  Future<void> setGuest(bool value) async {
+    state = const AsyncLoading();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_key, value);
+    state = AsyncData(value);
+  }
 }
 
-final isGuestProvider = NotifierProvider<GuestNotifier, bool>(GuestNotifier.new);
+final isGuestProvider = AsyncNotifierProvider<GuestNotifier, bool>(GuestNotifier.new);

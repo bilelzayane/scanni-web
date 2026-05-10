@@ -241,11 +241,10 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                     color: const Color(0xFFF5F5F5),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/icon_app.svg',
-                    height: 24,
-                    width: 24,
-                    colorFilter: ColorFilter.mode(Colors.grey[700]!, BlendMode.srcIn),
+                  child: const Icon(
+                    Icons.analytics_outlined,
+                    color: Colors.grey,
+                    size: 24,
                   ),
                 ),
                 const SizedBox(width: 12),

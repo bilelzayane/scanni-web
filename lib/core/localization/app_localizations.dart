@@ -71,6 +71,10 @@ class AppLocalizations {
       'analysisImpossible': 'Analysis Impossible',
       'analysisImpossibleDesc': 'We could not identify the ingredients. This may be due to a blurry image or an unrecognized product.',
       'retry': 'Retry',
+      'pwaInstallTitle': 'Install Scanni',
+      'pwaInstallSubtitle': 'Add Scanni to your home screen for a faster experience.',
+      'pwaInstallActionAndroid': 'Install App',
+      'pwaInstallActionIos': "Tap 'Share' and then 'Add to Home Screen'",
     },
     'fr': {
       'guestHistoryTitle': "Connectez-vous pour voir l'historique",
@@ -133,6 +137,10 @@ class AppLocalizations {
       'analysisImpossible': 'Analyse Impossible',
       'analysisImpossibleDesc': "Nous n'avons pas pu identifier les ingrédients. Cela peut être dû à une image floue ou un produit non reconnu.",
       'retry': 'Réessayer',
+      'pwaInstallTitle': 'Installer Scanni',
+      'pwaInstallSubtitle': "Ajoutez Scanni à votre écran d'accueil pour une expérience optimale.",
+      'pwaInstallActionAndroid': "Installer l'app",
+      'pwaInstallActionIos': "Appuyez sur 'Partager' puis 'Sur l'écran d'accueil'",
     },
     'ar': {
       'guestHistoryTitle': 'تسجيل الدخول لرؤية السجل',
@@ -195,6 +203,10 @@ class AppLocalizations {
       'analysisImpossible': 'التحليل مستحيل',
       'analysisImpossibleDesc': 'لم نتمكن من تحديد المكونات. قد يكون ذلك بسبب صورة غير واضحة أو منتج غير معروف.',
       'retry': 'إعادة المحاولة',
+      'pwaInstallTitle': 'تثبيت Scanni',
+      'pwaInstallSubtitle': 'أضف Scanni إلى شاشتك الرئيسية لتجربة أفضل.',
+      'pwaInstallActionAndroid': 'تثبيت التطبيق',
+      'pwaInstallActionIos': "اضغط على 'مشاركة' ثم 'إضافة إلى الشاشة الرئيسية'",
     },
     'ar_tn': {
       'guestHistoryTitle': 'ادخل باش تشوف السجل متاعك',
@@ -256,6 +268,10 @@ class AppLocalizations {
       'analysisImpossible': 'تحليل مستحيل',
       'analysisImpossibleDesc': 'ما نجمناش نعرفوا المكونات. ينجم يكون من تصويرة موش واضحة، وإلا المنتج موش معروف.',
       'retry': 'عاود مرة أخرى',
+      'pwaInstallTitle': 'تثبيت Scanni',
+      'pwaInstallSubtitle': 'زيد Scanni للاكرون متاعك باش تستعملها اسهل.',
+      'pwaInstallActionAndroid': "انستالي l'app",
+      'pwaInstallActionIos': "انزل على 'Partager' وبعد 'Sur l'écran d'accueil'",
     },
   };
 
@@ -433,6 +449,18 @@ class AppLocalizations {
   String get retry =>
       _localizedValues[locale.languageCode]?['retry'] ??
       _localizedValues['en']!['retry']!;
+  String get pwaInstallTitle =>
+      _localizedValues[locale.languageCode]?['pwaInstallTitle'] ??
+      _localizedValues['en']!['pwaInstallTitle']!;
+  String get pwaInstallSubtitle =>
+      _localizedValues[locale.languageCode]?['pwaInstallSubtitle'] ??
+      _localizedValues['en']!['pwaInstallSubtitle']!;
+  String get pwaInstallActionAndroid =>
+      _localizedValues[locale.languageCode]?['pwaInstallActionAndroid'] ??
+      _localizedValues['en']!['pwaInstallActionAndroid']!;
+  String get pwaInstallActionIos =>
+      _localizedValues[locale.languageCode]?['pwaInstallActionIos'] ??
+      _localizedValues['en']!['pwaInstallActionIos']!;
 
   bool get isRTL =>
       locale.languageCode == 'ar' || locale.languageCode == 'ar_tn';

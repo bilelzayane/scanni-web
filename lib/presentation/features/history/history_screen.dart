@@ -618,11 +618,10 @@ class _ScanListItem extends StatelessWidget {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: SvgPicture.asset(
-                'assets/icons/icon_app.svg',
-                height: 24,
-                width: 24,
-                colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+              child: const Icon(
+                Icons.analytics_outlined,
+                color: Colors.grey,
+                size: 24,
               ),
             ),
             const SizedBox(width: 16),

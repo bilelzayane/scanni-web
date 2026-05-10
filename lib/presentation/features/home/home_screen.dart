@@ -11,6 +11,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/repositories/scan_repository.dart';
 import '../history/history_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/widgets/pwa_install_banner.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -52,6 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 _buildHeader(context),
                 const SizedBox(height: 24),
                 _buildSearchBar(context),
+                const PwaInstallBanner(),
                 const SizedBox(height: 24),
                 _buildHeroCard(context),
                 const SizedBox(height: 24),
@@ -132,9 +134,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.history,
-                        size: 64,
+                        Icons.analytics_outlined,
                         color: Colors.grey,
+                        size: 24,
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -397,11 +399,10 @@ class _RecentScanTile extends StatelessWidget {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: SvgPicture.asset(
-                'assets/icons/icon_app.svg',
-                height: 24,
-                width: 24,
-                colorFilter: ColorFilter.mode(Colors.grey[400]!, BlendMode.srcIn),
+              child: const Icon(
+                Icons.analytics_outlined,
+                color: Colors.grey,
+                size: 24,
               ),
             ),
             const SizedBox(width: 12),

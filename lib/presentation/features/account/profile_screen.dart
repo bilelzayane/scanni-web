@@ -368,7 +368,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     print('DEBUG: build() called - _pathologies: $_pathologies');
 
     // Guest mode: show a login prompt instead of crashing
-    final isGuest = ref.watch(isGuestProvider);
+    final isGuest = ref.watch(isGuestProvider).value ?? false;
     if (isGuest) {
       return Scaffold(
         backgroundColor: Colors.white,
