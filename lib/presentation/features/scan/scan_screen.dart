@@ -76,7 +76,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   }
 
   void _resetScanState() {
-    _autoDetectTimer?.cancel();
     _cameraController.start();
     if (mounted) {
       setState(() {
@@ -87,12 +86,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     }
     Future.delayed(const Duration(milliseconds: 100), () {
       ref.read(scanControllerProvider.notifier).resetScan();
-    });
-    // Start auto-detection simulation after a short delay
-    _autoDetectTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted && !_isProcessing && !_showResults) {
-        _simulateVisualDetection();
-      }
     });
   }
 
@@ -391,7 +384,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
-                'Point camera to scan',
+                'Point camera and tap button to scan',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
