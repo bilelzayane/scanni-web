@@ -122,6 +122,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       final aiService = ref.read(aiServiceProvider);
       final aiResponseJson = await aiService.analyzeProduct(bytes);
       final Map<String, dynamic> payload = json.decode(aiResponseJson);
+      print('DEBUG: ScanScreen - Parsed AI Payload: $payload');
 
       // Check if analysis actually returned anything
       if (payload.isEmpty ||

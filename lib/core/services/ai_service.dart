@@ -13,7 +13,7 @@ class AiService {
 
   AiService(this.apiKey) {
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       apiKey: apiKey,
       generationConfig: GenerationConfig(responseMimeType: 'application/json'),
     );
@@ -76,7 +76,9 @@ SPECIFIC HANDLING:
 
     try {
       final response = await _model.generateContent(content);
-      return response.text ?? '{}';
+      final result = response.text ?? '{}';
+      print('DEBUG: AiService.analyzeProduct - RESULT: $result');
+      return result;
     } catch (e) {
       print('DEBUG: AiService.analyzeProduct - ERROR: $e');
       rethrow;
