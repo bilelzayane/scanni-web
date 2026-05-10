@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/providers/guest_session_provider.dart';
 import '../../features/home/home_screen.dart';
@@ -52,22 +53,37 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authStateProvider);
       final isGuestState = ref.read(isGuestProvider);
       
-      // If either auth or guest state is loading (first initialization), don't redirect yet
-      if (authState.isLoading || isGuestState.isLoading) return null;
-
-      final isAuthenticated = authState.value?.session != null;
-      final isGuest = isGuestState.value ?? false;
       final isOnAuthPage = state.uri.toString() == '/auth';
 
-      // Allow through if authenticated OR in guest mode
-      if (isAuthenticated || isGuest) {
-        // Don't let authenticated/guest users sit on /auth
-        if (isOnAuthPage) return '/';
+      // 1. If still loading initial data, don't redirect anywhere
+      if (authState.isLoading || isGuestState.isLoading) {
         return null;
       }
 
-      // Unauthenticated non-guest: redirect to /auth (except when already there)
-      if (!isOnAuthPage) return '/auth';
+      // 2. Determine authentication status with multi-source check
+      // Check: Stream value OR Synchronous Current Session OR Synchronous Current User
+      final session = authState.value?.session ?? Supabase.instance.client.auth.currentSession;
+      final isAuthenticated = session != null || Supabase.instance.client.auth.currentUser != null;
+      final isGuest = isGuestState.value ?? false;
+
+      // Debugging logs (Check your browser console)
+      print('DEBUG: Router Redirect - Auth: $isAuthenticated, Guest: $isGuest, Loading: ${authState.isLoading}, Path: ${state.uri}');
+
+      // 3. Redirection Logic
+      if (isAuthenticated || isGuest) {
+        // If authenticated/guest and trying to go to auth page, send home
+        if (isOnAuthPage) return '/';
+        // Otherwise, stay where we are
+        return null;
+      }
+
+      // 4. Not authenticated and not guest: send to auth page
+      if (!isOnAuthPage) {
+        // If authState is currently refreshing/loading, wait a bit more before forcing login
+        if (authState.isRefreshing) return null;
+        return '/auth';
+      }
+
       return null;
     },
     routes: [

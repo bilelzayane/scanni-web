@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,7 +102,38 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     setState(() {
       _flashEnabled = !_flashEnabled;
     });
-    _cameraController.toggleTorch();
+
+    if (kIsWeb) {
+      _toggleWebTorch(_flashEnabled);
+    } else {
+      _cameraController.toggleTorch();
+    }
+  }
+
+  Future<void> _toggleWebTorch(bool enabled) async {
+    try {
+      final mediaDevices = html.window.navigator.mediaDevices;
+      if (mediaDevices == null) {
+        print('DEBUG: Web Torch - mediaDevices not supported');
+        return;
+      }
+
+      final devices = await mediaDevices.enumerateDevices();
+      final videoDevices = devices.where((device) => device.kind == 'videoinput').toList();
+      
+      if (videoDevices.isNotEmpty) {
+        final stream = await mediaDevices.getUserMedia({'video': {'facingMode': 'environment'}});
+        final tracks = stream.getVideoTracks();
+        if (tracks.isNotEmpty) {
+          final track = tracks.first;
+          final constraints = {'advanced': [{'torch': enabled}]};
+          await (track as dynamic).applyConstraints(constraints);
+          print('DEBUG: Web Torch - Applied constraints: $constraints');
+        }
+      }
+    } catch (e) {
+      print('DEBUG: Web Torch - Error: $e');
+    }
   }
 
   Future<void> _handleCapture() async {

@@ -27,20 +27,28 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     final isStandalone = html.window.matchMedia('(display-mode: standalone)').matches ||
         (html.window.navigator.asTest?['standalone'] ?? false);
 
+    // Check user agent
+    final ua = html.window.navigator.userAgent.toLowerCase();
+    _isIos = ua.contains('iphone') || ua.contains('ipad') || ua.contains('ipod');
+    
+    // Broader mobile detection
+    final isMobile = ua.contains('mobile') || 
+                    ua.contains('android') || 
+                    ua.contains('iphone') || 
+                    ua.contains('phone');
+
+    print('DEBUG: PWA Banner - isStandalone: $isStandalone, isMobile: $isMobile, isIos: $_isIos');
+
     if (isStandalone) {
       setState(() => _isVisible = false);
       return;
     }
 
-    // Check user agent for iOS
-    final ua = html.window.navigator.userAgent.toLowerCase();
-    _isIos = ua.contains('iphone') || ua.contains('ipad') || ua.contains('ipod');
-
-    // Only show on mobile devices
-    final isMobile = ua.contains('mobile') || ua.contains('android') || _isIos;
-
     if (isMobile) {
       setState(() => _isVisible = true);
+    } else {
+      // For testing purposes, you might want to force it to true
+      // setState(() => _isVisible = true);
     }
   }
 

@@ -18,19 +18,9 @@ void main() async {
     await Supabase.initialize(
       url: Env.supabaseUrl,
       anonKey: Env.supabaseAnonKey,
-      // Only use pkce if deep-linking is properly configured
-      // authFlowType: AuthFlowType.pkce,
     );
   } catch (e) {
-    // Handle AuthException related to code verifier
-    if (e.toString().contains('Code verifier') ||
-        e.toString().contains('code_verifier')) {
-      // Force sign-out to clear corrupted local state
-      // Note: This will be handled by the auth service initialization
-      print('DEBUG: Code verifier error detected, clearing local session');
-    }
-    // Continue app initialization even if Supabase init fails
-    // The auth service will handle the session state
+    print('DEBUG: Supabase initialization error: $e');
   }
 
   runApp(const ProviderScope(child: MainApp()));

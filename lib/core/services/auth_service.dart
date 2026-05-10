@@ -36,19 +36,13 @@ class AuthService {
           if (error.toString().contains('Code verifier') ||
               error.toString().contains('code_verifier')) {
             print(
-              'DEBUG: Code verifier error in auth listener, forcing sign-out',
+              'DEBUG: Code verifier warning (non-fatal)',
             );
-            Supabase.instance.client.auth.signOut();
           }
         },
       );
     } catch (e) {
       print('DEBUG: Error initializing auth listener: $e');
-      if (e.toString().contains('Code verifier') ||
-          e.toString().contains('code_verifier')) {
-        print('DEBUG: Code verifier error during init, forcing sign-out');
-        await Supabase.instance.client.auth.signOut();
-      }
     }
   }
 
