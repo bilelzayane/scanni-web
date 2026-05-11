@@ -443,6 +443,28 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
             ),
           ),
 
+          // ── Gallery button (top left) - ONLY ON LOCALHOST ───────────
+          if (kIsWeb && html.window.location.hostname == 'localhost')
+            Positioned(
+              top: 50,
+              left: 16,
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.photo_library,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+
           // ── Flash toggle button (top right) ─────────────────────────
           Positioned(
             top: 50,
@@ -656,8 +678,21 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
     final ingredientIds = historyDetails
         .map((d) => d.technicalCode)
         .toList();
-    final scientificLexicon = await repo.getScientificLexicon(ingredientIds);
-    final scientificFacts = await repo.getScientificFacts(ingredientIds);
+
+    List<ScientificLexicon> scientificLexicon = [];
+    List<ScientificFact> scientificFacts = [];
+
+    try {
+      scientificLexicon = await repo.getScientificLexicon(ingredientIds);
+    } catch (e) {
+      print('DEBUG: Error fetching lexicon (ignoring): $e');
+    }
+
+    try {
+      scientificFacts = await repo.getScientificFacts(ingredientIds);
+    } catch (e) {
+      print('DEBUG: Error fetching facts (ignoring): $e');
+    }
 
     // Update title controller if we got a better name from DB
     if (history.name != null && history.name != _nameController.text) {
