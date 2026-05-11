@@ -80,7 +80,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: SvgPicture.asset('web/icon_app.svg'),
+                child: SvgPicture.asset('assets/logos/icon_app.svg'),
               ),
               const SizedBox(width: 12),
               Expanded(
