@@ -56,12 +56,10 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
 
     final l10n = AppLocalizations.of(context);
 
-    return Positioned(
-      bottom: 100, // Above bottom nav
-      left: 16,
-      right: 16,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Material(
-        elevation: 8,
+        elevation: 4,
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
         child: Container(
