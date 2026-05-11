@@ -59,10 +59,12 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     final suggestionAsync = ref.watch(aiSuggestionProvider(widget.id));
     final l10n = AppLocalizations.of(context);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: suggestionAsync.when(
+    return Directionality(
+      textDirection: l10n.isRTL ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: suggestionAsync.when(
           data: (suggestion) {
             // Sort ingredients by priorityScore descending
             final sortedIngredients = List<IngredientDetected>.from(suggestion.ingredientsDetected)
@@ -166,20 +168,21 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   children: [
                     const Icon(Icons.error_outline, color: Colors.red, size: 48),
                     const SizedBox(height: 16),
-                    Text('Error loading scan details: $e'),
+                    Text('${l10n.errorLoadingDetails}: $e'),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed:
                           () => ref.refresh(aiSuggestionProvider(widget.id)),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                     TextButton(
                       onPressed: () => context.go('/'),
-                      child: const Text('Go home'),
+                      child: Text(l10n.goHome),
                     ),
                   ],
                 ),
               ),
+          ),
         ),
       ),
     );
@@ -213,10 +216,14 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
+      textDirection: (Localizations.localeOf(context).languageCode == 'ar' ||
+              Localizations.localeOf(context).languageCode == 'ar_tn')
+          ? TextDirection.rtl
+          : TextDirection.ltr,
       children: [
         // Back button (Leading)
         IconButton(
-          icon: Icon(isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             final fromHome = GoRouterState.of(context).uri.queryParameters['fromHome'] == 'true';
             if (fromHome) {
@@ -241,9 +248,11 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                     color: const Color(0xFFF5F5F5),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(
-                    Icons.analytics_outlined,
-                    color: Colors.grey,
+                  child: Icon(
+                    (suggestion.payload?['scan_info']?['test_type'] == 'dish_scan')
+                        ? Icons.local_dining
+                        : Icons.list_alt,
+                    color: Colors.grey[700],
                     size: 24,
                   ),
                 ),
@@ -296,15 +305,16 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     WidgetRef ref,
     AiSuggestion suggestion,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController(text: suggestion.scanInfo.titleSuggested);
     return showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Edit Title'),
+            title: Text(l10n.editTitle),
             content: TextField(
               controller: controller,
-              decoration: const InputDecoration(hintText: 'Enter new title'),
+              decoration: InputDecoration(hintText: l10n.enterNewTitle),
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
             ),
@@ -327,13 +337,13 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error updating title: $e')),
+                          SnackBar(content: Text('${l10n.errorLoadingDetails}: $e')),
                         );
                       }
                     }
                   }
                 },
-                child: const Text('Save'),
+                 child: Text(l10n.save),
               ),
             ],
           ),
@@ -344,18 +354,17 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    final l10n = AppLocalizations.of(context);
     return showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Confirm Delete'),
-            content: const Text(
-              'Are you sure you want to delete this scan from your history?',
-            ),
+            title: Text(l10n.confirmDelete),
+            content: Text(l10n.areYouSureDelete),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(l10n.cancel),
               ),
               TextButton(
                 onPressed: () async {
@@ -369,12 +378,12 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error deleting scan: $e')),
+                          SnackBar(content: Text('${l10n.errorLoadingDetails}: $e')),
                       );
                     }
                   }
                 },
-                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                 child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
               ),
             ],
           ),
@@ -385,6 +394,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     List<IngredientDetected> ingredients,
     Locale locale,
   ) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -395,8 +405,8 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Quantitative Analysis',
+          Text(
+            l10n.quantitativeAnalysis,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -406,7 +416,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           const SizedBox(height: 12),
           if (ingredients.isEmpty)
             Text(
-              'No quantitative data available',
+              l10n.noQuantitativeData,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             )
           else
@@ -496,6 +506,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     List<IngredientDetected> ingredients,
     Locale locale,
   ) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -507,8 +518,8 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Technical Composition',
+          Text(
+            l10n.technicalComposition,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -518,7 +529,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           const SizedBox(height: 12),
           if (ingredients.isEmpty)
             Text(
-              'No technical data available',
+              l10n.noQuantitativeData, // Using quantitative as fallback or adding specific
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             )
           else

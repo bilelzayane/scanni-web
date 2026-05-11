@@ -323,27 +323,30 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Guest Mode',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                Text(
+                  l10n.guestModeLabel,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
                 Text(
-                  'Sign in to sync your scans across devices',
+                  l10n.guestModeSyncDesc,
                   style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                 ),
               ],
             ),
           ),
           TextButton(
-            onPressed: () => context.go('/auth'),
+            onPressed: () {
+              ref.read(isGuestProvider.notifier).setGuest(false);
+              context.go('/auth');
+            },
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: const Text(
-              'Sign In',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            child: Text(
+              l10n.signIn,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),
         ],
@@ -376,7 +379,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => context.go('/auth'),
+            onPressed: () {
+              ref.read(isGuestProvider.notifier).setGuest(false);
+              context.go('/auth');
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryDarkColor,
               foregroundColor: Colors.white,
@@ -559,6 +565,7 @@ class _ScanListItem extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     // Prefer scan.name (from ai_suggestions.scan_info.title_suggested)
     final name = (scan.name != null && scan.name!.isNotEmpty) 
@@ -577,8 +584,8 @@ class _ScanListItem extends StatelessWidget {
       );
     }
 
-    return const Text(
-      'Unknown',
+    return Text(
+      l10n.unknown,
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -591,12 +598,14 @@ class _ScanListItem extends StatelessWidget {
   }
 
   IconData _getIcon() {
-    // Use uniform analytics icon as requested; do not use image_url
-    return Icons.analytics;
+    return scan.testType == TestType.dishScan
+        ? Icons.local_dining
+        : Icons.list_alt;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => context.push('/result/${scan.id}'),
       child: Container(
@@ -618,9 +627,9 @@ class _ScanListItem extends StatelessWidget {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.analytics_outlined,
-                color: Colors.grey,
+              child: Icon(
+                _getIcon(),
+                color: Colors.grey[700],
                 size: 24,
               ),
             ),

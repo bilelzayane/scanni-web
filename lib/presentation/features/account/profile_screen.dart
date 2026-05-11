@@ -454,8 +454,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(
-              l10n.isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+            icon: const Icon(
+              Icons.arrow_back_ios,
               color: Colors.black,
             ),
             onPressed: () => Navigator.of(context).pop(),

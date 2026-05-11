@@ -10,6 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:flutter_app/core/localization/app_localizations.dart';
 import 'package:flutter_app/presentation/core/theme/app_theme.dart';
@@ -136,23 +137,28 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     }
   }
 
-  Future<void> _handleCapture() async {
+  Future<void> _pickImage() async {
+    if (_isProcessing) return;
+    
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      
+      if (image != null) {
+        final Uint8List bytes = await image.readAsBytes();
+        await _processImage(bytes);
+      }
+    } catch (e) {
+      print('DEBUG: _pickImage ERROR: $e');
+    }
+  }
+
+  Future<void> _processImage(Uint8List bytes) async {
     if (!mounted || _isProcessing) return;
     setState(() => _isProcessing = true);
 
     try {
-      // 1. Capture image from RepaintBoundary
-      final boundary =
-          _boundaryKey.currentContext?.findRenderObject()
-              as RenderRepaintBoundary?;
-      if (boundary == null) throw Exception('Could not find camera boundary');
-
-      final image = await boundary.toImage(pixelRatio: 2.0);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData == null) throw Exception('Could not capture image bytes');
-      final Uint8List bytes = byteData.buffer.asUint8List();
-
-      // 2. AI Analysis (Gemini)
+      // 1. AI Analysis (Gemini)
       final aiService = ref.read(aiServiceProvider);
       final aiResponseJson = await aiService.analyzeProduct(bytes);
       final Map<String, dynamic> payload = json.decode(aiResponseJson);
@@ -168,7 +174,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
         return;
       }
 
-      // 3. Supabase Integration
+      // 2. Supabase Integration
       final authRepo = ref.read(authRepositoryProvider);
       final scanRepo = ref.read(scanRepositoryProvider);
       final userId = authRepo.currentUser?.id;
@@ -197,7 +203,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       });
       _showResultDrawer(result);
     } catch (e) {
-      print('DEBUG: _handleCapture - ERROR: $e');
+      print('DEBUG: _processImage - ERROR: $e');
       if (mounted) {
         setState(() => _isProcessing = false);
         _showNoResultDrawer();
@@ -205,8 +211,29 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     }
   }
 
+  Future<void> _handleCapture() async {
+    if (!mounted || _isProcessing) return;
+
+    try {
+      // 1. Capture image from RepaintBoundary
+      final boundary =
+          _boundaryKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
+      if (boundary == null) throw Exception('Could not find camera boundary');
+
+      final image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) throw Exception('Could not capture image bytes');
+      final Uint8List bytes = byteData.buffer.asUint8List();
+
+      await _processImage(bytes);
+    } catch (e) {
+      print('DEBUG: _handleCapture - ERROR: $e');
+    }
+  }
+
   void _simulateVisualDetection() {
-    // Keeping this but using real logic if possible, or just calling _handleCapture
+    // For visual detection, we still use the boundary capture
     _handleCapture();
   }
 
@@ -299,6 +326,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   // ─── Build ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scanState = ref.watch(scanControllerProvider);
 
     ref.listen(cameraTriggerNotifierProvider, (previous, next) {
@@ -345,7 +373,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Erreur Caméra: ${error.errorCode}',
+                            '${l10n.cameraError}: ${error.errorCode}',
                             style: const TextStyle(color: Colors.red),
                           ),
                         ],
@@ -372,6 +400,27 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.black54, Colors.transparent],
+                ),
+              ),
+            ),
+          ),
+
+          // ── Gallery button (top left) ──────────────────────────────
+          Positioned(
+            top: 50,
+            left: 16,
+            child: GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.photo_library,
+                  color: Colors.white,
+                  size: 24,
                 ),
               ),
             ),
@@ -418,8 +467,8 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 color: Colors.black.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
-                'Point camera and tap button to scan',
+              child: Text(
+                l10n.scanInstruction,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -434,17 +483,17 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
           if (isLoading)
             Container(
               color: Colors.black.withValues(alpha: 0.55),
-              child: const Center(
+              child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(
+                    const CircularProgressIndicator(
                       color: Colors.white,
                       strokeWidth: 2.5,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
-                      'Analyse en cours…',
+                      l10n.analyzingInProgress,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -544,7 +593,6 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = widget.scanResult.name ?? 'Analyse';
     _sheetController.addListener(() {
       if (_sheetController.size <= 0.02) {
         Navigator.of(context).maybePop();
@@ -563,6 +611,8 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInitialized) {
+      final l10n = AppLocalizations.of(context);
+      _nameController.text = widget.scanResult.name ?? l10n.analysisImpossible;
       _isInitialized = true;
       _dataFuture = _fetchData();
     }
@@ -745,6 +795,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return DraggableScrollableSheet(
       controller: _sheetController,
       initialChildSize: 0.6,
@@ -796,7 +847,9 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
-                        Icons.list_alt,
+                        widget.scanResult.testType == TestType.dishScan
+                            ? Icons.local_dining
+                            : Icons.list_alt,
                         size: 24,
                         color: Colors.grey[700],
                       ),
@@ -907,7 +960,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
                               color: AppTheme.primaryColor,
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
@@ -916,8 +969,8 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
                                 ),
                                 SizedBox(width: 8),
                                 Text(
-                                  'Launch a new scan',
-                                  style: TextStyle(
+                                  l10n.newScanButton,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -949,6 +1002,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
     Function(int) onToggle,
     List<IngredientDetected> historyDetails,
   ) {
+    final l10n = AppLocalizations.of(context);
     // Filter for ingredients with quantity and sort by priorityScore DESC
     final filteredDetails = historyDetails
         .where((d) => d.quantity != null)
@@ -968,7 +1022,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quantitative Analysis',
+            l10n.quantitativeAnalysis,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -978,7 +1032,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
           const SizedBox(height: 12),
           if (filteredDetails.isEmpty)
             Text(
-              'No quantitative data detected',
+              l10n.noQuantitativeDataDetected,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             )
           else
@@ -1078,6 +1132,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
     Function(int) onToggle,
     List<IngredientDetected> historyDetails,
   ) {
+    final l10n = AppLocalizations.of(context);
     // Filter for ingredients without quantity and sort by priorityScore DESC
     final filteredDetails = historyDetails
         .where((d) => d.quantity == null)
@@ -1097,7 +1152,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Technical Composition',
+            l10n.technicalComposition,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -1107,7 +1162,7 @@ class _ResultDrawerSheetState extends ConsumerState<_ResultDrawerSheet> {
           const SizedBox(height: 12),
           if (filteredDetails.isEmpty)
             Text(
-              'No technical components detected',
+              l10n.noQuantitativeDataDetected, // Re-using this or could add more specific if needed
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             )
           else

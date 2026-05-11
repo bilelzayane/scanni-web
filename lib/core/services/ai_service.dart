@@ -40,7 +40,8 @@ STRICT RULES:
 JSON STRUCTURE:
 {
   "scan_info": {
-    "title_suggested": "Generic name only"
+    "title_suggested": "Generic name only",
+    "test_type": "dish_scan OR label_scan"
   },
   "ingredients_detected": [
     {

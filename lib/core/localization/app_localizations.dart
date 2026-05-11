@@ -75,6 +75,20 @@ class AppLocalizations {
       'pwaInstallSubtitle': 'Add Scanni to your home screen for a faster experience.',
       'pwaInstallActionAndroid': 'Install App',
       'pwaInstallActionIos': "Tap 'Share' and then 'Add to Home Screen'",
+      'guestModeLabel': 'Guest Mode',
+      'guestModeSyncDesc': 'Sign in to sync your scans across devices',
+      'signIn': 'Sign In',
+      'noScanHistorySubtitle': 'Start scanning to see them here',
+      'cameraError': 'Camera Error',
+      'scanAnother': 'Scan Another',
+      'noQuantitativeDataDetected': 'No quantitative data detected',
+      'scanInstruction': 'Point camera and tap button to scan',
+      'analyzingInProgress': 'Analysis in progress...',
+      'historyDetailTitle': 'History Details',
+      'analyzingImage': 'Analyzing image...',
+      'unknown': 'Unknown',
+      'errorLoadingDetails': 'Error loading details',
+      'goHome': 'Go Home',
     },
     'fr': {
       'guestHistoryTitle': "Connectez-vous pour voir l'historique",
@@ -141,6 +155,20 @@ class AppLocalizations {
       'pwaInstallSubtitle': "Ajoutez Scanni à votre écran d'accueil pour une expérience optimale.",
       'pwaInstallActionAndroid': "Installer l'app",
       'pwaInstallActionIos': "Appuyez sur 'Partager' puis 'Sur l'écran d'accueil'",
+      'guestModeLabel': 'Mode Invité',
+      'guestModeSyncDesc': 'Connectez-vous pour synchroniser vos scans',
+      'signIn': 'Se connecter',
+      'noScanHistorySubtitle': 'Commencez à scanner pour les voir ici',
+      'cameraError': 'Erreur Caméra',
+      'scanAnother': 'Scanner un autre',
+      'noQuantitativeDataDetected': 'Aucune donnée quantitative détectée',
+      'scanInstruction': 'Pointez la caméra et appuyez pour scanner',
+      'analyzingInProgress': 'Analyse en cours...',
+      'historyDetailTitle': 'Détails de l\'historique',
+      'analyzingImage': 'Analyse de l\'image...',
+      'unknown': 'Inconnu',
+      'errorLoadingDetails': 'Erreur lors du chargement',
+      'goHome': 'Accueil',
     },
     'ar': {
       'guestHistoryTitle': 'تسجيل الدخول لرؤية السجل',
@@ -207,6 +235,20 @@ class AppLocalizations {
       'pwaInstallSubtitle': 'أضف Scanni إلى شاشتك الرئيسية لتجربة أفضل.',
       'pwaInstallActionAndroid': 'تثبيت التطبيق',
       'pwaInstallActionIos': "اضغط على 'مشاركة' ثم 'إضافة إلى الشاشة الرئيسية'",
+      'guestModeLabel': 'وضع الزائر',
+      'guestModeSyncDesc': 'سجل الدخول لمزامنة مسحاتك عبر الأجهزة',
+      'signIn': 'تسجيل الدخول',
+      'noScanHistorySubtitle': 'ابدأ المسح لرؤيتها هنا',
+      'cameraError': 'خطأ في الكاميرا',
+      'scanAnother': 'مسح آخر',
+      'noQuantitativeDataDetected': 'لم يتم اكتشاف بيانات كمية',
+      'scanInstruction': 'وجه الكاميرا واضغط على الزر للمسح',
+      'analyzingInProgress': 'جاري التحليل...',
+      'historyDetailTitle': 'تفاصيل السجل',
+      'analyzingImage': 'جاري تحليل الصورة...',
+      'unknown': 'غير معروف',
+      'errorLoadingDetails': 'خطأ في تحميل التفاصيل',
+      'goHome': 'الرئيسية',
     },
     'ar_tn': {
       'guestHistoryTitle': 'ادخل باش تشوف السجل متاعك',
@@ -272,6 +314,20 @@ class AppLocalizations {
       'pwaInstallSubtitle': 'زيد Scanni للاكرون متاعك باش تستعملها اسهل.',
       'pwaInstallActionAndroid': "انستالي l'app",
       'pwaInstallActionIos': "انزل على 'Partager' وبعد 'Sur l'écran d'accueil'",
+      'guestModeLabel': 'وضع الزائر (Guest)',
+      'guestModeSyncDesc': 'ادخل باش تسجل المسحات متاعك في حسابك',
+      'signIn': 'ادخل (Sign In)',
+      'noScanHistorySubtitle': 'ابدا اسكاني باش تلقاهم هنا',
+      'cameraError': 'مشكلة في الكاميرا',
+      'scanAnother': 'اسكاني حاجة اخرى',
+      'noQuantitativeDataDetected': 'ما لقاش بيانات كمية',
+      'scanInstruction': 'صوّب الكاميرا وانزل على البوتون باش تسكاني',
+      'analyzingInProgress': 'قاعد يحلل توا...',
+      'historyDetailTitle': 'تفاصيل السجل',
+      'analyzingImage': 'قاعد يحلل في التصويرة...',
+      'unknown': 'موش معروف',
+      'errorLoadingDetails': 'فما مشكلة في تحميل التفاصيل',
+      'goHome': 'الرئيسية',
     },
   };
 
@@ -461,6 +517,48 @@ class AppLocalizations {
   String get pwaInstallActionIos =>
       _localizedValues[locale.languageCode]?['pwaInstallActionIos'] ??
       _localizedValues['en']!['pwaInstallActionIos']!;
+  String get guestModeLabel =>
+      _localizedValues[locale.languageCode]?['guestModeLabel'] ??
+      _localizedValues['en']!['guestModeLabel']!;
+  String get guestModeSyncDesc =>
+      _localizedValues[locale.languageCode]?['guestModeSyncDesc'] ??
+      _localizedValues['en']!['guestModeSyncDesc']!;
+  String get signIn =>
+      _localizedValues[locale.languageCode]?['signIn'] ??
+      _localizedValues['en']!['signIn']!;
+  String get noScanHistorySubtitle =>
+      _localizedValues[locale.languageCode]?['noScanHistorySubtitle'] ??
+      _localizedValues['en']!['noScanHistorySubtitle']!;
+  String get cameraError =>
+      _localizedValues[locale.languageCode]?['cameraError'] ??
+      _localizedValues['en']!['cameraError']!;
+  String get scanAnother =>
+      _localizedValues[locale.languageCode]?['scanAnother'] ??
+      _localizedValues['en']!['scanAnother']!;
+  String get noQuantitativeDataDetected =>
+      _localizedValues[locale.languageCode]?['noQuantitativeDataDetected'] ??
+      _localizedValues['en']!['noQuantitativeDataDetected']!;
+  String get scanInstruction =>
+      _localizedValues[locale.languageCode]?['scanInstruction'] ??
+      _localizedValues['en']!['scanInstruction']!;
+  String get analyzingInProgress =>
+      _localizedValues[locale.languageCode]?['analyzingInProgress'] ??
+      _localizedValues['en']!['analyzingInProgress']!;
+  String get historyDetailTitle =>
+      _localizedValues[locale.languageCode]?['historyDetailTitle'] ??
+      _localizedValues['en']!['historyDetailTitle']!;
+  String get analyzingImage =>
+      _localizedValues[locale.languageCode]?['analyzingImage'] ??
+      _localizedValues['en']!['analyzingImage']!;
+  String get unknown =>
+      _localizedValues[locale.languageCode]?['unknown'] ??
+      _localizedValues['en']!['unknown']!;
+  String get errorLoadingDetails =>
+      _localizedValues[locale.languageCode]?['errorLoadingDetails'] ??
+      _localizedValues['en']!['errorLoadingDetails']!;
+  String get goHome =>
+      _localizedValues[locale.languageCode]?['goHome'] ??
+      _localizedValues['en']!['goHome']!;
 
   bool get isRTL =>
       locale.languageCode == 'ar' || locale.languageCode == 'ar_tn';

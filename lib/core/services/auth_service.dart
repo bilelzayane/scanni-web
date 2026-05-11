@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/locale_provider.dart';
 
+import '../../data/repositories/scan_repository.dart';
+
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref);
 });
@@ -62,6 +64,10 @@ class AuthService {
           ref.read(localeProvider.notifier).setLocale(languagePref);
         }
       }
+
+      // Sync guest scans to this account
+      await ref.read(scanRepositoryProvider).syncGuestScans(user.id);
+      print('DEBUG: Guest scans synchronized for user ${user.id}');
     } catch (e) {
       print('Error fetching user profile after sign-in: $e');
     }

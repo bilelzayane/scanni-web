@@ -12,6 +12,7 @@ import '../../../data/repositories/scan_repository.dart';
 import '../history/history_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/widgets/pwa_install_banner.dart';
+import '../../../core/providers/guest_session_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +22,59 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+
+  Widget _buildSyncBanner(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_upload_outlined,
+              color: AppTheme.primaryDarkColor, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.guestModeLabel,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                Text(
+                  l10n.guestModeSyncDesc,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              ref.read(isGuestProvider.notifier).setGuest(false);
+              context.go('/auth');
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              l10n.signIn,
+              style: const TextStyle(
+                color: AppTheme.primaryDarkColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +88,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
     );
+
+    final isGuest = ref.watch(isGuestProvider).value ?? false;
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
@@ -51,6 +107,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(context),
+                if (isGuest) ...[
+                  const SizedBox(height: 12),
+                  _buildSyncBanner(context),
+                ],
                 const SizedBox(height: 24),
                 _buildSearchBar(context),
                 const PwaInstallBanner(),
@@ -134,7 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.analytics_outlined,
+                        Icons.history,
                         color: Colors.grey,
                         size: 24,
                       ),
@@ -146,8 +206,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.noScanHistorySubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[500],
                       ),
                     ),
                   ],
@@ -399,9 +468,9 @@ class _RecentScanTile extends StatelessWidget {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.analytics_outlined,
-                color: Colors.grey,
+              child: Icon(
+                _getIcon(),
+                color: Colors.grey[700],
                 size: 24,
               ),
             ),

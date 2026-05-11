@@ -19,6 +19,17 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   String _selectedLanguage = 'en';
+  bool _isLanguageInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isLanguageInitialized) {
+      final currentLocale = ref.read(localeProvider);
+      _selectedLanguage = currentLocale.languageCode;
+      _isLanguageInitialized = true;
+    }
+  }
 
   @override
   void initState() {

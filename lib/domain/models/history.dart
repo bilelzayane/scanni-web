@@ -73,11 +73,16 @@ class History {
   }
 
   factory History.fromAiSuggestion(AiSuggestion suggestion) {
+    // Extract test_type from payload if available
+    final payload = suggestion.payload;
+    final scanInfo = payload?['scan_info'] as Map<String, dynamic>?;
+    final testTypeStr = scanInfo?['test_type'] as String? ?? 'label_scan';
+
     return History(
       id: suggestion.id,
       userId: suggestion.userId ?? '',
       sessionId: '',
-      testType: TestType.scientific,
+      testType: TestType.fromString(testTypeStr),
       imageUrl: suggestion.imageUrl,
       scanDate: suggestion.createdAt.toIso8601String(),
       name: suggestion.scanInfo.titleSuggested,
