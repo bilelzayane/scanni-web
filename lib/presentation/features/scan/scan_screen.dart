@@ -215,20 +215,26 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     if (!mounted || _isProcessing) return;
 
     try {
-      // 1. Capture image from RepaintBoundary
-      final boundary =
-          _boundaryKey.currentContext?.findRenderObject()
-              as RenderRepaintBoundary?;
-      if (boundary == null) throw Exception('Could not find camera boundary');
+      // For Web, ImagePicker.pickImage(source: ImageSource.camera) is the most reliable way 
+      // to get a high-quality photo that Gemini can analyze.
+      final ImagePicker picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 90,
+      );
 
-      final image = await boundary.toImage(pixelRatio: 2.0);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData == null) throw Exception('Could not capture image bytes');
-      final Uint8List bytes = byteData.buffer.asUint8List();
+      if (photo == null) return;
 
+      final Uint8List bytes = await photo.readAsBytes();
       await _processImage(bytes);
     } catch (e) {
       print('DEBUG: _handleCapture - ERROR: $e');
+      if (mounted) {
+        setState(() => _isProcessing = false);
+        _showNoResultDrawer();
+      }
     }
   }
 
@@ -400,27 +406,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.black54, Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-
-          // ── Gallery button (top left) ──────────────────────────────
-          Positioned(
-            top: 50,
-            left: 16,
-            child: GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.photo_library,
-                  color: Colors.white,
-                  size: 24,
                 ),
               ),
             ),
