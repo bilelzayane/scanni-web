@@ -544,14 +544,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 ),
               ),
             ),
-
-          // ── PWA Install Banner ──────────────────────────────────────
-          Positioned(
-            bottom: 100,
-            left: 16,
-            right: 16,
-            child: const PwaInstallBanner(),
-          ),
         ],
       ),
     );

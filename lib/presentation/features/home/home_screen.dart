@@ -113,7 +113,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
                 const SizedBox(height: 24),
                 _buildSearchBar(context),
-                const PwaInstallBanner(),
                 const SizedBox(height: 24),
                 _buildHeroCard(context),
                 const SizedBox(height: 24),
