@@ -1,6 +1,9 @@
-import 'dart:html' as html;
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_app/presentation/core/theme/app_theme.dart';
 import '../../../core/localization/app_localizations.dart';
 
 class PwaInstallBanner extends StatefulWidget {
@@ -12,43 +15,38 @@ class PwaInstallBanner extends StatefulWidget {
 
 class _PwaInstallBannerState extends State<PwaInstallBanner> {
   bool _isVisible = false;
-  bool _isIos = false;
+  bool _isIOS = false;
+  bool _isAndroid = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkInstallationStatus();
-    });
+    if (kIsWeb) {
+      _checkInstallation();
+    }
   }
 
-  void _checkInstallationStatus() {
-    // Check if already in standalone mode
+  void _checkInstallation() {
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    _isIOS = userAgent.contains('iphone') || userAgent.contains('ipad');
+    _isAndroid = userAgent.contains('android');
+
+    // Only show on mobile
+    if (!_isIOS && !_isAndroid) return;
+
+    // Check if already in standalone mode (installed)
     final isStandalone = html.window.matchMedia('(display-mode: standalone)').matches ||
-        (html.window.navigator.asTest?['standalone'] ?? false);
+                        (html.window.navigator as dynamic).standalone == true;
 
-    // Check user agent
-    final ua = html.window.navigator.userAgent.toLowerCase();
-    _isIos = ua.contains('iphone') || ua.contains('ipad') || ua.contains('ipod');
-    
-    // Broader mobile detection
-    final isMobile = ua.contains('mobile') || 
-                    ua.contains('android') || 
-                    ua.contains('iphone') || 
-                    ua.contains('phone');
-
-    print('DEBUG: PWA Banner - isStandalone: $isStandalone, isMobile: $isMobile, isIos: $_isIos');
-
-    if (isStandalone) {
-      setState(() => _isVisible = false);
-      return;
-    }
-
-    if (isMobile) {
-      setState(() => _isVisible = true);
-    } else {
-      // For testing purposes, you might want to force it to true
-      // setState(() => _isVisible = true);
+    if (!isStandalone) {
+      // Show after a short delay
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      });
     }
   }
 
@@ -57,55 +55,52 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     if (!_isVisible) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context);
-    final isRTL = l10n.isRTL;
 
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+    return Positioned(
+      bottom: 100, // Above bottom nav
+      left: 16,
+      right: 16,
+      child: Material(
+        elevation: 8,
+        borderRadius: BorderRadius.circular(16),
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2)),
           ),
-        ],
-        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+          child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                width: 48,
+                height: 48,
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.install_mobile, color: AppTheme.primaryColor),
+                child: SvgPicture.asset('web/icon_app.svg'),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       l10n.pwaInstallTitle,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      l10n.pwaInstallSubtitle,
+                      _isIOS ? l10n.pwaInstallActionIos : l10n.pwaInstallActionAndroid,
                       style: TextStyle(
+                        fontSize: 12,
                         color: Colors.grey[600],
-                        fontSize: 13,
                       ),
                     ),
                   ],
@@ -113,46 +108,16 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
               ),
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
-                onPressed: () => setState(() => _isVisible = false),
+                onPressed: () {
+                  setState(() {
+                    _isVisible = false;
+                  });
+                },
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_isIos) 
-                  const Icon(Icons.ios_share, color: Colors.white, size: 18)
-                else
-                  const Icon(Icons.add_to_home_screen, color: Colors.white, size: 18),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    _isIos ? l10n.pwaInstallActionIos : l10n.pwaInstallActionAndroid,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
-
-extension on html.Navigator {
-  dynamic get asTest => this;
 }

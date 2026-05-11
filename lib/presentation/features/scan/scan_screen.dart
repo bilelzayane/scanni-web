@@ -24,6 +24,7 @@ import 'package:flutter_app/domain/models/history.dart';
 import 'package:flutter_app/domain/models/scientific_lexicon.dart';
 import 'package:flutter_app/domain/models/scientific_fact.dart';
 import 'package:flutter_app/domain/models/test_type.dart';
+import 'package:flutter_app/presentation/core/widgets/pwa_install_banner.dart';
 
 // ─── Detail Data Model for Drawer ─────────────────────────────────────────────
 class _DetailData {
@@ -543,6 +544,9 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 ),
               ),
             ),
+
+          // ── PWA Install Banner ──────────────────────────────────────
+          const PwaInstallBanner(),
         ],
       ),
     );
