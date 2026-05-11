@@ -211,23 +211,55 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     }
   }
 
+  Future<Uint8List?> _captureWebFrame() async {
+    try {
+      // Find the video element created by mobile_scanner in the DOM
+      final html.VideoElement? video = html.document.querySelector('video') as html.VideoElement?;
+      if (video == null || video.videoWidth == 0) return null;
+
+      // Create a canvas to draw the current frame
+      final canvas = html.CanvasElement(
+        width: video.videoWidth,
+        height: video.videoHeight,
+      );
+      
+      canvas.context2D.drawImage(video, 0, 0);
+      
+      // Convert canvas to blob/bytes
+      final dataUrl = canvas.toDataUrl('image/jpeg', 0.9);
+      final base64String = dataUrl.split(',').last;
+      return base64Decode(base64String);
+    } catch (e) {
+      print('DEBUG: _captureWebFrame ERROR: $e');
+      return null;
+    }
+  }
+
   Future<void> _handleCapture() async {
     if (!mounted || _isProcessing) return;
 
     try {
-      // For Web, ImagePicker.pickImage(source: ImageSource.camera) is the most reliable way 
-      // to get a high-quality photo that Gemini can analyze.
-      final ImagePicker picker = ImagePicker();
-      final XFile? photo = await picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        imageQuality: 90,
-      );
+      Uint8List? bytes;
 
-      if (photo == null) return;
+      if (kIsWeb) {
+        // Try seamless web capture first
+        bytes = await _captureWebFrame();
+      }
 
-      final Uint8List bytes = await photo.readAsBytes();
+      // Fallback to ImagePicker if web capture failed or if on mobile
+      if (bytes == null) {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(
+          source: ImageSource.camera,
+          maxWidth: 1600,
+          maxHeight: 1600,
+          imageQuality: 90,
+        );
+
+        if (photo == null) return;
+        bytes = await photo.readAsBytes();
+      }
+
       await _processImage(bytes);
     } catch (e) {
       print('DEBUG: _handleCapture - ERROR: $e');
