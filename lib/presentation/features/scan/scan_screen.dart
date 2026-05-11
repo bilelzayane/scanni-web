@@ -53,6 +53,8 @@ class ScanScreen extends ConsumerStatefulWidget {
 class _ScanScreenState extends ConsumerState<ScanScreen> {
   final MobileScannerController _cameraController = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
+    autoStart: true,
+    formats: const [],
   );
   final GlobalKey _boundaryKey = GlobalKey();
 
